@@ -66,7 +66,9 @@ export NOPOLL_TEST_DEBUG=1
 Setting this enables printing test application's log output.
 These go to standard error. Each message is prefixed with its 'id'.
 
+----
 export NOPOLL_TEST_DEBUG_NOPOLL=1
+----
 
 Setting this enables printing noPoll library's internal debug output.
 These all go to a file. The file is named nopoll_'id'.log for client side
@@ -82,15 +84,11 @@ client processes simultaneously and waits for all of them to finish.
 For example, to run 5 clients for 10 seconds each connecting to a server
 instance running on host 10.1.2.3 at port 12020 run:
 
+----
 ./nopoll_stress_test.sh 10.1.2.3 12020 10 5
+----
 
 Each client is started with a unique id (an incrementing integer).
 The output will give some idea of how long it took to establish each connection
 and the number of messages retrieved by each client. If noPolls internal
 logging is enabled, it will create multiple log files, one for each client.
-
-
-
-
-
-
