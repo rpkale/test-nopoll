@@ -47,7 +47,7 @@ uint64_t GetTime()
     return tTimeStamp;
 }
 
-/********** Server Side **********/
+/********** Server Side Code **********/
 void sendResponse(noPollConn * conn, int requestLen) {
     int rc = nopoll_conn_send_binary(conn, serverResponseBuffer, requestLen);
     if (rc != requestLen) {
@@ -126,13 +126,14 @@ int create_listener(const char * port)
     return 0;
 }
 
-/********** Client Side code **********/
+/********** Client Side Code **********/
 int getResponse(noPollConn * conn, int requestLen, int index) {
     noPollMsg * msg;
     int count = 0;
     uint64_t beginTime = GetTime();
     int msglen = 0;
     while (true) {
+        count++;
         msg = nopoll_conn_get_msg(conn);
         if (msg != NULL) {
             noPollOpCode code = nopoll_msg_opcode(msg);
@@ -141,8 +142,9 @@ int getResponse(noPollConn * conn, int requestLen, int index) {
                 return -1;
             }
             msglen += nopoll_msg_get_payload_size(msg);
-            DebugPrintf("Retrieved message %d frag %d:%d of size %d:%d",
-                index, nopoll_msg_is_fragment(msg), nopoll_msg_is_final(msg), nopoll_msg_get_payload_size(msg), msglen);
+            DebugPrintf("Retrieved message %d frag %d:%d of size %d (collected %d of %d)",
+                index, nopoll_msg_is_fragment(msg), nopoll_msg_is_final(msg),
+                    nopoll_msg_get_payload_size(msg), msglen, requestLen);
             if (nopoll_msg_is_final(msg) && (msglen != requestLen)) {
                 DebugPrintf("Final flag set arbitrarily??");
             }
@@ -157,11 +159,10 @@ int getResponse(noPollConn * conn, int requestLen, int index) {
             LogPrintf("Client disconnected!!");
             return -1;
         }
-        count++;
         nopoll_sleep(100);
     }
 
-    DebugPrintf("Retrieved message %d in %d ms looped: %d",
+    DebugPrintf("Retrieved full message %d in %d ms looped: %d",
             index, (int) (GetTime() - beginTime), count);
     if (msglen != requestLen) {
         LogPrintf("Received invalid response length %d != %d", msglen, requestLen);
@@ -207,9 +208,10 @@ int create_client(const char * host, const char * port, int duration)
     int messageCount = 0;
     begin_time = GetTime();
     while (true) {
+        // Send request
         int requestLen = (rand() % 32000) + 1;
+        requestLen = 20000;
         int requestCount = (rand() % 64) + 1;
-        //requestCount = 1;
         DebugPrintf("Requesting %d messages of %d bytes each [%d]", requestCount, requestLen, messageCount);
         int len = sprintf(message, "Get %d %d", requestLen, requestCount);
         if (nopoll_conn_send_text(conn, message, len) != len) {
@@ -217,6 +219,8 @@ int create_client(const char * host, const char * port, int duration)
             LogPrintf("Could not send message: %d", errno);
             break;
         }
+
+        // Collect responses
         for (int index = 0; index < requestCount; index++) {
             if (getResponse(conn, requestLen, index) < 0) {
                 rc = 1;
@@ -241,6 +245,7 @@ int create_client(const char * host, const char * port, int duration)
     return rc;
 }
 
+/********** Main **********/
 void usage() {
     printf("Usage: test_nopoll server port\n");
     printf("    or\n");

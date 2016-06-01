@@ -10,16 +10,3 @@ done
 
 echo "Waiting for processes to finish..."
 wait
-
-
-
-
-
-
-
-
-
-
-
-
-
