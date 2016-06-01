@@ -1,0 +1,88 @@
+
+Stress Test noPoll
+------------------
+
+
+A simple client/server program to stress test noPoll library
+
+http://www.aspl.es/nopoll/  -- An OpenSource WebSocket Toolkit
+
+
+The test program implements a simple client/server protocol over websocket.
+The client sends a text message to the server asking it to send back
+binary messages of specified length repeated back to back specified number of
+times. It picks a random message size and repeat count. It then waits for the
+server to send all the messages back. It verifies that all messages are retrieved
+properly. The client keeps repeating this with random values each time
+for a specified duration (in seconds) and then quits. Both the client and
+server run this as fast as possible.
+
+Both the client and server end abort as soon as any unexpected event occurs.
+
+Multiple clients can connect to a single server. The server responds to each
+client individually according to the requests it makes.
+
+Compile and Run
+---------------
+
+To compile, run make. The noPoll library is expected to be installed in
+your home directory under folder libnopoll.
+Tested on Debian/Jessie.
+
+The single executable can run as a websocket server or client depending
+on first argument.
+
+First invoke the executable as a websocket server at some port (say 12020)
+
+./test_nopoll server 12020
+
+Then, in another console (on same or another host PC) invoke the executable as a
+client.
+
+./test_nopoll client xyz 127.0.0.1 12020 5
+
+The second argument is an 'id' that can be any random string.
+It is used to prefix log messages and allows to distinguish messages from multiple
+clients running on the same console.
+
+The third and fourth arguments are the host IP Address and port to connect to.
+
+The last argument is the duration of the client test run in seconds.
+
+Debug Logs
+----------
+
+Before running the executable, you can set two environmental variables to
+control debug output:
+
+NOPOLL_TEST_DEBUG
+
+Setting this to some value enables printing application level log output.
+These go to standard error. Each message is prefixed with its 'id'
+
+NOPOLL_TEST_DEBUG_NOPOLL
+
+Setting this to some value enables printing internal noPoll library debug output.
+These all go to a file. The file is named nopoll_'id'.log for client side
+and nopoll_server.log for server side logs
+
+
+Stress Testing
+--------------
+
+A wrapper shell script 'nopoll_stress_test.sh' spawns off multiple test_nopoll
+client processes simultaneously and waits for all of them to finish.
+
+For example, to run 5 clients for 10 seconds each connecting to a server
+instance running on host 10.1.2.3 at port 12020 run:
+
+./nopoll_stress_test.sh 10.1.2.3 12020 10 5
+
+The output will give some idea of how long it took to establish each connection
+and the number of messages retrieved by each client.
+
+
+
+
+
+
