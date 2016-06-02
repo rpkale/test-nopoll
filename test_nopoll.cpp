@@ -203,6 +203,11 @@ int create_client(const char * host, const char * port, int duration)
     }
     LogPrintf("Connected in %d ms.", (int)(GetTime() - begin_time));
 
+    // Don't make any requests. Just sleep for given duration and exit
+    // sleep(duration);
+    // LogPrintf("Exiting...");
+    // return 0;
+
     // Start the client's request/response loop
     char message[32];
     int messageCount = 0;
