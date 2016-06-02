@@ -210,7 +210,6 @@ int create_client(const char * host, const char * port, int duration)
     while (true) {
         // Send request
         int requestLen = (rand() % 32000) + 1;
-        requestLen = 20000;
         int requestCount = (rand() % 64) + 1;
         DebugPrintf("Requesting %d messages of %d bytes each [%d]", requestCount, requestLen, messageCount);
         int len = sprintf(message, "Get %d %d", requestLen, requestCount);
