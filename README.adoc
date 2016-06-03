@@ -92,3 +92,26 @@ Each client is started with a unique id (an incrementing integer).
 The output will give some idea of how long it took to establish each connection
 and the number of messages retrieved by each client. If noPolls internal
 logging is enabled, it will create multiple log files, one for each client.
+
+
+Server Implementation in Node.js
+--------------------------------
+
+Also available is an implementation of the server side of the test case
+protocol using Node.js. This can be used to compare noPoll based client
+performance against the alternate implementation of the server.
+
+To install, first ensure node/npm is installed on the system.
+Then in the checked out test-nopoll directory run:
+
+----
+npm install websocket.
+----
+
+Then run node.js based websocket server at desired port.
+For example:
+
+----
+node test_nopoll_server.js 12020
+----
+

@@ -107,7 +107,6 @@ int create_listener(const char * port)
     }
     if (debug_nopoll) {
        nopoll_log_set_handler(ctx, noPollLogger, NULL);
-       //nopoll_log_enable(ctx, nopoll_true);
     }
 
     noPollConn * listener = nopoll_listener_new(ctx, "0.0.0.0", port);
@@ -184,7 +183,6 @@ int create_client(const char * host, const char * port, int duration)
     }
     if (debug_nopoll) {
        nopoll_log_set_handler(ctx, noPollLogger, NULL);
-       //nopoll_log_enable(ctx, nopoll_true);
     }
 
     // Create connection
